@@ -8,18 +8,18 @@
     <artifactId>jetty-and-jul-example</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>jetty-distro-with-custom-jul</artifactId>
+  <artifactId>jetty-homebase-with-custom-jul</artifactId>
   <packaging>pom</packaging>
-  <name>Jetty Distro with Custom java.util.logging Handler</name>
+  <name>Jetty Home/Base with Custom java.util.logging Handler</name>
   <properties>
-    <distro-dir>${project.build.directory}/jetty-distro</distro-dir>
+    <jetty-home-dir>${project.build.directory}/jetty-home</jetty-home-dir>
+    <jetty-base-dir>${project.build.directory}/jetty-base</jetty-base-dir>
   </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.1</version>
         <executions>
           <execution>
             <id>unpack-distro</id>
@@ -31,15 +31,14 @@
               <artifactItems>
                 <artifactItem>
                   <groupId>org.eclipse.jetty</groupId>
-                  <artifactId>jetty-distribution</artifactId>
-                  <version>${jetty-version}</version>
+                  <artifactId>jetty-home</artifactId>
+                  <version>${jetty.version}</version>
                   <type>zip</type>
                   <overWrite>true</overWrite>
-                  <excludes>**/log4j.properties,**/contexts/**,**/webapps/**</excludes>
                 </artifactItem>
               </artifactItems>
               <outputAbsoluteArtifactFilename>true</outputAbsoluteArtifactFilename>
-              <outputDirectory>${distro-dir}</outputDirectory>
+              <outputDirectory>${jetty-home-dir}</outputDirectory>
               <overWriteSnapshots>true</overWriteSnapshots>
               <overWriteIfNewer>true</overWriteIfNewer>
             </configuration>
@@ -52,7 +51,7 @@
             </goals>
             <configuration>
               <includeTypes>jar</includeTypes>
-              <outputDirectory>${distro-dir}/jetty-distribution-${jetty-version}/lib/logging</outputDirectory>
+              <outputDirectory>${jetty-base-dir}/lib/ext</outputDirectory>
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
               <overWriteIfNewer>true</overWriteIfNewer>
@@ -67,7 +66,7 @@
             </goals>
             <configuration>
               <includeTypes>war</includeTypes>
-              <outputDirectory>${distro-dir}/jetty-distribution-${jetty-version}/webapps</outputDirectory>
+              <outputDirectory>${jetty-base-dir}/webapps</outputDirectory>
               <stripVersion>true</stripVersion>
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
@@ -89,7 +88,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${distro-dir}/jetty-distribution-${jetty-version}</outputDirectory>
+              <outputDirectory>${jetty-base-dir}/</outputDirectory>
               <resources>
                 <resource>
                   <directory>${project.basedir}/src/main/config</directory>
