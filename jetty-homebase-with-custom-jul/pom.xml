@@ -17,12 +17,13 @@
   </properties>
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>unpack-distro</id>
+            <id>unpack-home</id>
             <phase>generate-resources</phase>
             <goals>
               <goal>unpack</goal>
@@ -77,28 +78,46 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <!--
+          Setup the jetty base using start.jar
+          -->
+          <execution>
+            <id>setup home</id>
+            <phase>generate-resources</phase>
+            <configuration>
+              <mainClass>org.eclipse.jetty.start.Main</mainClass>
+              <arguments>
+                <argument>jetty.home=${jetty-home-dir}/jetty-home-${jetty.version}</argument>
+                <argument>jetty.base=${jetty-base-dir}</argument>
+                <argument>--add-modules=http,deploy,ext,resources,logging-jul</argument>
+                <argument>--approve-all-licenses</argument>
+              </arguments>
+            </configuration>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.5</version>
+        <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-config</id>
-            <phase>process-resources</phase>
+            <id>Replace jetty.base contents</id>
+            <phase>generate-resources</phase>
             <goals>
-              <goal>copy-resources</goal>
+              <goal>run</goal>
             </goals>
             <configuration>
-              <outputDirectory>${jetty-base-dir}/</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/src/main/config</directory>
-                  <filtering>false</filtering>
-                  <includes>
-                    <include>**/*</include>
-                  </includes>
-                </resource>
-              </resources>
-              <overwrite>true</overwrite>
+              <target>
+                <delete dir="${jetty-base-dir}/resources" />
+                <copydir src="${project.basedir}/src/main/config"
+                  dest="${jetty-base-dir}/" />
+              </target>
             </configuration>
           </execution>
         </executions>
@@ -116,6 +135,11 @@
       <artifactId>jetty-jul-test-webapp</artifactId>
       <version>${project.version}</version>
       <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-start</artifactId>
+      <version>${jetty.version}</version>
     </dependency>
   </dependencies>
 </project>
