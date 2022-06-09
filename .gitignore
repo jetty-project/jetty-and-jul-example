@@ -1,6 +1,15 @@
-.project
+# Eclipse Files
 .classpath
+.project
 .settings/
+
+# Maven Files
 target/
+
+# IntelliJ Files
+.idea/
+*.iml
+
+# Random Detritus
 *.swp
 *.log
